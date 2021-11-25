@@ -32,19 +32,19 @@ def learning_for_self_play():
     # )
 
     self_agent_2 = TTTAgentDqn(
-        name="AGENT_1", env=env, gamma=0.99, learning_rate=0.001,
+        name="AGENT_2", env=env, gamma=0.99, learning_rate=0.001,
         replay_buffer_size=10_000, batch_size=32, target_sync_step_interval=500,
         min_buffer_size_for_training=100
     )
     self_agent_2.q = self_agent_1.q
 
     # self_agent_2 = TTTAgentReinforce(
-    #     name="AGENT_1", env=env, gamma=0.99, learning_rate=0.001
+    #     name="AGENT_2", env=env, gamma=0.99, learning_rate=0.001
     # )
     # self_agent_2.policy = self_agent_1.policy
 
     # self_agent_2 = TTTAgentA2c(
-    #     name="AGENT_1", env=env, gamma=0.99, learning_rate=0.001, batch_size=32
+    #     name="AGENT_2", env=env, gamma=0.99, learning_rate=0.001, batch_size=32
     # )
     # self_agent_2.actor_critic_model = self_agent_1.actor_critic_model
 
@@ -169,9 +169,6 @@ def self_play(self_agent):
 
     agent_1 = self_agent
     agent_2 = self_agent
-
-    agent_2.q_table = agent_1.q_table
-    agent_2.policy = agent_1.policy
 
     current_agent = agent_1
 

@@ -24,15 +24,15 @@ def learning_for_dummy_vs_agent_2():
 
     agent_1 = Dummy_Agent(name="AGENT_1", env=env)
     agent_2 = TTTAgentDqn(
-        name="AGENT_1", env=env, gamma=0.99, learning_rate=0.001,
+        name="AGENT_2", env=env, gamma=0.99, learning_rate=0.001,
         replay_buffer_size=10_000, batch_size=32, target_sync_step_interval=500,
         min_buffer_size_for_training=100
     )
     # agent_2 = TTTAgentReinforce(
-    #     name="AGENT_1", env=env, gamma=0.99, learning_rate=0.001
+    #     name="AGENT_2", env=env, gamma=0.99, learning_rate=0.001
     # )
     # agent_2 = TTTAgentA2c(
-    #     name="AGENT_1", env=env, gamma=0.99, learning_rate=0.001, batch_size=32
+    #     name="AGENT_2", env=env, gamma=0.99, learning_rate=0.001, batch_size=32
     # )
 
     total_steps = 0
