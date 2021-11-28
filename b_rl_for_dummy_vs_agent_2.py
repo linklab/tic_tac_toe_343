@@ -8,10 +8,10 @@ from agents.c_dqn_agent import TTTAgentDqn
 
 INITIAL_EPSILON = 1.0
 FINAL_EPSILON = 0.01
-LAST_SCHEDULED_EPISODES = 50_000
+LAST_SCHEDULED_EPISODES = 40_000
 
 # 최대 반복 에피소드(게임) 횟수
-MAX_EPISODES = 100_000
+MAX_EPISODES = 50_000
 
 STEP_VERBOSE = False
 BOARD_RENDER = False
@@ -31,7 +31,7 @@ def learning_for_dummy_vs_agent_2():
     # agent_2 = TTTAgentReinforce(
     #     name="AGENT_2", env=env, gamma=0.99, learning_rate=0.001
     # )
-    # agent_2 = TTTAgentA2c(
+    # agent_2 = TTTAgentA2C(
     #     name="AGENT_2", env=env, gamma=0.99, learning_rate=0.001, batch_size=32
     # )
 
@@ -68,7 +68,7 @@ def learning_for_dummy_vs_agent_2():
                 # 게임 완료 및 게임 승패 관련 통계 정보 출력
                 print_game_statistics(
                     info, episode, epsilon, total_steps,
-                    game_status, agent_1, agent_2
+                    game_status
                 )
 
                 # 미루워 두었던 agent_2의 배치에 transition 정보 추가
@@ -76,13 +76,13 @@ def learning_for_dummy_vs_agent_2():
                 # agent_1이 이기면 1.0, 비기면 0.0
                 if STATE_2 is not None and ACTION_2 is not None:
                     agent_2_episode_td_error += agent_2.learning(
-                        STATE_2, ACTION_2, None, -1.0 * reward, done, epsilon
+                        STATE_2, ACTION_2, next_state, -1.0 * reward, done
                     )
             else:
                 # 미루워 두었던 agent_2의 배치에 transition 정보 추가
                 if STATE_2 is not None and ACTION_2 is not None:
                     agent_2_episode_td_error += agent_2.learning(
-                        STATE_2, ACTION_2, next_state, reward, done, epsilon
+                        STATE_2, ACTION_2, next_state, reward, done
                     )
 
                 # agent_2 스텝 수행
@@ -98,13 +98,13 @@ def learning_for_dummy_vs_agent_2():
                     # 게임 완료 및 게임 승패 관련 통계 정보 출력
                     print_game_statistics(
                         info, episode, epsilon, total_steps,
-                        game_status, agent_1, agent_2
+                        game_status
                     )
 
                     # reward: agent_2가 착수하여 done=True
                     # agent_2가 이기면 -1.0, 비기면 0.0
                     agent_2_episode_td_error += agent_2.learning(
-                        state, action, None, -1.0 * reward, done, epsilon
+                        state, action, next_state, -1.0 * reward, done
                     )
                 else:
                     # agent_2에 방문한 현재 상태 및 수행한 행동 정보를
@@ -144,8 +144,8 @@ def play_with_agent_2(agent_2):
         next_state, _, done, info = env.step(action)
         if current_agent == agent_2:
             print("     State:", state)
-            print("   Q-value:", current_agent.get_q_values_for_one_state(state))
-            print("    Policy:", current_agent.get_policy_for_one_state(state))
+            # print("   Q-value:", current_agent.get_q_values_for_one_state(state))
+            # print("    Policy:", current_agent.get_policy_for_one_state(state))
             print("    Action:", action)
             print("Next State:", next_state, end="\n\n")
 

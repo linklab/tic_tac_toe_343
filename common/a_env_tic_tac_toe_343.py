@@ -3,7 +3,7 @@ import numpy as np
 
 from agents.a_dummy_agent import Dummy_Agent
 
-PLAYER_TO_SYMBOL = ['-', 'O', 'X']
+PLAYER_TO_SYMBOL = [' ', 'O', 'X']
 PLAYER_1_INT = 1
 PLAYER_2_INT = -1
 
@@ -11,35 +11,21 @@ BOARD_ROWS = 3
 BOARD_COLS = 4
 
 #########################################################
-##  (0,0) -> 8, (0,1) ->  9, (0,2) -> 10, (0,3) -> 11  ##
+##  (0,0) -> 0, (0,1) ->  1, (0,2) ->  2, (0,3) ->  3  ##
 ##  (1,0) -> 4, (1,1) ->  5, (1,2) ->  6, (1,3) ->  7  ##
-##  (2,0) -> 0, (2,1) ->  1, (2,2) ->  2, (2,3) ->  3  ##
+##  (2,0) -> 8, (2,1) ->  9, (2,2) -> 10, (2,3) -> 11  ##
 #########################################################
 def position_to_action_idx(row_idx, col_idx):
-    if row_idx == 2:
-        return col_idx
-    elif row_idx == 1:
-        return col_idx + 4
-    elif row_idx == 0:
-        return col_idx + 8
-    else:
-        raise ValueError()
+    return 3*row_idx + col_idx
 
 
 #########################################################
-##  8 -> (0,0),  9 -> (0,1), 10 -> (0,2), 11 -> (0,3)  ##
+##  0 -> (0,0),  1 -> (0,1),  2 -> (0,2),  3 -> (0,3)  ##
 ##  4 -> (1,0),  5 -> (1,1),  6 -> (1,2),  7 -> (1,3)  ##
-##  0 -> (2,0),  1 -> (2,1),  2 -> (2,2),  3 -> (2,3)  ##
+##  8 -> (2,0),  9 -> (2,1), 10 -> (2,2), 11 -> (2,3)  ##
 #########################################################
 def action_idx_to_position(idx):
-    if idx in [0, 1, 2, 3]:
-        return 2, idx
-    elif idx in [4, 5, 6, 7]:
-        return 1, idx - 4
-    elif idx in [8, 9, 10, 11]:
-        return 0, idx - 8
-    else:
-        raise ValueError()
+    return idx//4, idx % 4
 
 
 #########################################################
@@ -62,27 +48,17 @@ class State:
 
     # 현 상태에서 유효한 행동 ID 리스트 반환
     def get_available_actions(self):
+        available_actions = []
         if self.is_end_state():
-            available_positions = []
-        else:
-            available_positions = [
-                (i, j) for i in range(BOARD_ROWS)
-                for j in range(BOARD_COLS) if self.data[i, j] == 0
-            ]
+            return available_actions
 
-        available_action_ids = []
-        for available_position in available_positions:
-            available_action_ids.append(
-                position_to_action_idx(
-                    available_position[0], available_position[1]
-                )
-            )
+        available_actions = [i for i in range(12) if self.data.flatten()[i] == 0]
 
-        if len(available_action_ids) == 12:
-            available_action_ids.remove(6)
-            available_action_ids.remove(7)
+        if len(available_actions) == 12:
+            available_actions.remove(6)
+            available_actions.remove(7)
 
-        return available_action_ids
+        return available_actions
 
     # 플레이어가 종료 상태에 있는지 판단.
     # 플레이어가 게임을 이기거나, 지거나, 비겼다면 True 반환, 그 외는 False 반환
@@ -125,14 +101,18 @@ class State:
 
     # 게임판 상태 출력
     def get_state_as_board(self):
-        board_str = ""
+        board_str = "┌───┬───┬───┬───┐\n"
         for i in range(self.board_rows):
-            board_str += '-----------------\n'
-            out = '| '
+            board_str += '│'
             for j in range(self.board_cols):
-                out += PLAYER_TO_SYMBOL[int(self.data[i, j])] + ' | '
-            board_str += out + "\n"
-        board_str += '-----------------\n'
+                board_str += ' ' + PLAYER_TO_SYMBOL[int(self.data[i, j])] + ' │'
+            board_str += '\n'
+
+            if i < self.board_rows - 1:
+                board_str += '├───┼───┼───┼───┤\n'
+            else:
+                board_str += '└───┴───┴───┴───┘\n'
+
         return board_str
 
     def __str__(self):

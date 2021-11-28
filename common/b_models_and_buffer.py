@@ -17,19 +17,20 @@ class QNet(nn.Module):
         super(QNet, self).__init__()
         self.n_features = n_features
         self.n_actions = n_actions
-        self.fc1 = nn.Linear(n_features, 128)  # fully connected
-        self.fc2 = nn.Linear(128, 128)
-        self.fc3 = nn.Linear(128, n_actions)
-        self.version = 0
+        self.fc = nn.Sequential(
+            nn.Linear(n_features, 128),
+            nn.ReLU(),
+            nn.Linear(128, 128),
+            nn.ReLU(),
+            nn.Linear(128, n_actions)
+        )
         self.device = device
 
     def forward(self, x):
         if isinstance(x, np.ndarray):
             x = torch.tensor(x, dtype=torch.float32, device=self.device)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
+        out = self.fc(x)
+        return out
 
 
 class Policy(nn.Module):
@@ -62,8 +63,13 @@ class Policy(nn.Module):
 class ActorCritic(nn.Module):
     def __init__(self, n_features=4, n_actions=2, device=torch.device("cpu")):
         super(ActorCritic, self).__init__()
-        self.fc1 = nn.Linear(n_features, 128)
-        self.fc2 = nn.Linear(128, 128)
+
+        self.fc = nn.Sequential(
+            nn.Linear(n_features, 128),
+            nn.ReLU(),
+            nn.Linear(128, 128),
+            nn.ReLU()
+        )
         self.fc_pi = nn.Linear(128, n_actions)
         self.fc_v = nn.Linear(128, 1)
         self.device = device
@@ -71,9 +77,9 @@ class ActorCritic(nn.Module):
     def forward(self, x):
         if isinstance(x, np.ndarray):
             x = torch.tensor(x, dtype=torch.float32, device=self.device)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        return x
+
+        out = self.fc(x)
+        return out
 
     def pi(self, x):
         x = self.forward(x)

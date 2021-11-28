@@ -1,5 +1,7 @@
 import random
+import torch
 from torch import optim
+import numpy as np
 
 from common.b_models_and_buffer import QNet, ReplayBuffer
 
@@ -34,14 +36,14 @@ class TTTAgentDqn:
         self.training_time_steps = 0
 
     def get_action(self, state, epsilon=0.0):
-        available_action_ids = state.get_available_actions()
-        action_id = random.choice(available_action_ids)
+        available_actions = state.get_available_actions()
+        action = random.choice(available_actions)
 
         # TODO
 
-        return action_id
+        return action
 
-    def learning(self, state, action, next_state, reward, done, epsilon):
+    def learning(self, state, action, next_state, reward, done):
         loss = 0.0
 
         # TODO

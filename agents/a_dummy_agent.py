@@ -7,6 +7,7 @@ class Dummy_Agent:
         self.env = env
 
     def get_action(self, state):
-        available_action_ids = state.get_available_actions()
-        action_id = random.choice(available_action_ids)
-        return action_id
+        available_actions = state.get_available_actions()
+        action = random.choice(available_actions)
+
+        return action
