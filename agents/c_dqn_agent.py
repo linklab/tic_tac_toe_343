@@ -35,7 +35,7 @@ class TTTAgentDqn:
         self.time_steps = 0
         self.training_time_steps = 0
 
-    def get_action(self, state, epsilon=0.0):
+    def get_action(self, state, epsilon=0.0, mode="TRAIN"):
         available_actions = state.get_available_actions()
         action = random.choice(available_actions)
 

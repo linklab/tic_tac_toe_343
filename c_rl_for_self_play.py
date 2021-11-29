@@ -185,7 +185,7 @@ def self_play(self_agent):
         done = False
         while not done:
             total_steps += 1
-            action = current_agent.get_action(state)
+            action = current_agent.get_action(state, mode="PLAY")
 
             next_state, _, done, info = env.step(action)
 

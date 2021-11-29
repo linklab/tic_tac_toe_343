@@ -137,7 +137,11 @@ def play_with_agent_1(agent_1):
 
     done = False
     while not done:
-        action = current_agent.get_action(state)
+        if isinstance(current_agent, Human_Agent):
+            action = current_agent.get_action(state)
+        else:
+            action = current_agent.get_action(state, mode="PLAY")
+
         next_state, _, done, info = env.step(action)
         if current_agent == agent_1:
             print("     State:", state)
