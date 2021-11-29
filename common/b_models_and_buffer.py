@@ -46,18 +46,8 @@ class Policy(nn.Module):
             x = torch.tensor(x, dtype=torch.float32, device=self.device)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.softmax(self.fc3(x), dim=1 if x.dim() == 2 else 0)
+        x = F.softmax(self.fc3(x), dim=-1)
         return x
-
-    def get_action(self, x, mode="train"):
-        action_prob = self.forward(x)
-        m = Categorical(probs=action_prob)
-
-        if mode == "train":
-            action = m.sample()
-        else:
-            action = torch.argmax(m.probs)
-        return action.cpu().numpy()
 
 
 class ActorCritic(nn.Module):

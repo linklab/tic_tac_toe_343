@@ -2,7 +2,7 @@
 from agents.b_human_agent import Human_Agent
 from agents.a_dummy_agent import Dummy_Agent
 from agents.c_dqn_agent import TTTAgentDqn
-from agents.c_a2c_agent import TTTAgentA2C
+from agents.e_a2c_agent import TTTAgentA2C
 
 from common.a_env_tic_tac_toe_343 import TicTacToe343
 from common.c_game_stats import draw_performance, print_game_statistics, \
