@@ -55,8 +55,8 @@ class State:
         available_actions = [i for i in range(12) if self.data.flatten()[i] == 0]
 
         if len(available_actions) == 12:
+            available_actions.remove(5)
             available_actions.remove(6)
-            available_actions.remove(7)
 
         return available_actions
 
@@ -126,6 +126,7 @@ class TicTacToe343:
         self.BOARD_SIZE = BOARD_ROWS * BOARD_COLS
         self.current_state = None  # 현재 상태 관리
         self.current_agent_int = None  # 현재 에이전트(플레이어) 관리
+        self.ALL_ACTIONS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
         self.INITIAL_STATE = State()  # 초기 상태 설정
 
@@ -171,7 +172,7 @@ class TicTacToe343:
 
         return next_state, reward, done, info
 
-    def render(self, mode='human'):
+    def render(self):
         print(self.current_state.get_state_as_board())
 
     def get_new_state(self, i, j, state_data, player_int):

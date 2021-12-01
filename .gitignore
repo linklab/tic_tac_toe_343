@@ -132,3 +132,5 @@ dmypy.json
 output/
 
 agents/c_dqn_agent_solution.py
+agents/d_reinforce_agent_solution.py
+agents/e_a2c_agent_solution.py

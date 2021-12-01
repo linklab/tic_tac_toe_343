@@ -1,22 +1,21 @@
 # 선수 에이전트: RL 에이전트, 후수 에이전트: Dummy 에이전트
 from agents.b_human_agent import Human_Agent
 from agents.a_dummy_agent import Dummy_Agent
-from agents.c_dqn_agent import TTTAgentDqn
-from agents.e_a2c_agent import TTTAgentA2C
+from agents.c_dqn_agent_solution import TTTAgentDqn
+from agents.d_reinforce_agent_solution import TTTAgentReinforce
+from agents.e_a2c_agent_solution import TTTAgentA2C
 
 from common.a_env_tic_tac_toe_343 import TicTacToe343
 from common.c_game_stats import draw_performance, print_game_statistics, \
     print_step_status, epsilon_scheduled, GameStatus
 
 
-import torch
-
 INITIAL_EPSILON = 1.0
 FINAL_EPSILON = 0.01
-LAST_SCHEDULED_EPISODES = 40_000
+LAST_SCHEDULED_EPISODES = 50_000
 
 # 최대 반복 에피소드(게임) 횟수
-MAX_EPISODES = 50_000
+MAX_EPISODES = 100_000
 
 STEP_VERBOSE = False
 BOARD_RENDER = False
@@ -29,17 +28,17 @@ def learning_for_agent_1_vs_dummy():
     env = TicTacToe343()
 
     # Create agent
-    agent_1 = TTTAgentDqn(
-        name="AGENT_1", env=env, gamma=0.99, learning_rate=0.001,
-        replay_buffer_size=10_000, batch_size=32, target_sync_step_interval=500,
-        min_buffer_size_for_training=100
-    )
+    # agent_1 = TTTAgentDqn(
+    #     name="AGENT_1", env=env, gamma=0.99, learning_rate=0.00001,
+    #     replay_buffer_size=10_000, batch_size=32, target_sync_step_interval=500,
+    #     min_buffer_size_for_training=100
+    # )
     # agent_1 = TTTAgentReinforce(
-    #     name="AGENT_1", env=env, gamma=0.99, learning_rate=0.001
+    #     name="AGENT_1", env=env, gamma=0.99, learning_rate=0.00001
     # )
-    # agent_1 = TTTAgentA2C(
-    #     name="AGENT_1", env=env, gamma=0.99, learning_rate=0.001, batch_size=32
-    # )
+    agent_1 = TTTAgentA2C(
+        name="AGENT_1", env=env, gamma=0.99, learning_rate=0.00001, batch_size=32
+    )
     agent_2 = Dummy_Agent(name="AGENT_2", env=env)
 
     total_steps = 0
@@ -64,7 +63,7 @@ def learning_for_agent_1_vs_dummy():
             total_steps += 1
 
             # agent_1 스텝 수행
-            action = agent_1.get_action(state, epsilon)
+            action = agent_1.get_action(state, epsilon, mode="TRAIN")
             next_state, reward, done, info = env.step(action)
             print_step_status(
                 agent_1, state, action, next_state,
@@ -137,10 +136,10 @@ def play_with_agent_1(agent_1):
 
     done = False
     while not done:
-        if isinstance(current_agent, Human_Agent):
-            action = current_agent.get_action(state)
-        else:
+        if isinstance(current_agent, TTTAgentDqn):
             action = current_agent.get_action(state, mode="PLAY")
+        else:
+            action = current_agent.get_action(state)
 
         next_state, _, done, info = env.step(action)
         if current_agent == agent_1:

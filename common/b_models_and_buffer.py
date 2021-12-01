@@ -107,11 +107,15 @@ class ReplayBuffer:
         self.buffer.clear()
 
     def sample(self, batch_size: int) -> Tuple:
-        # Get index
-        indices = np.random.choice(len(self.buffer), size=batch_size, replace=False)
+        if batch_size == -1:
+            # Sample
+            observations, actions, next_observations, rewards, dones = zip(*self.buffer)
+        else:
+            # Get index
+            indices = np.random.choice(len(self.buffer), size=batch_size, replace=False)
 
-        # Sample
-        observations, actions, next_observations, rewards, dones = zip(*[self.buffer[idx] for idx in indices])
+            # Sample
+            observations, actions, next_observations, rewards, dones = zip(*[self.buffer[idx] for idx in indices])
 
         # Convert to ndarray for speed up cuda
         observations = np.array(observations)

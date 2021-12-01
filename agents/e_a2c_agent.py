@@ -26,11 +26,16 @@ class TTTAgentA2C:
         self.time_steps = 0
         self.training_time_steps = 0
 
-    def get_action(self, state, mode="TRAIN"):
+    def get_action(self, state, epsilon=0.0, mode="TRAIN"):
         available_actions = state.get_available_actions()
-        action = random.choice(available_actions)
+        action_prob = self.actor_critic_model.pi(state.data.flatten())
 
-        # TODO
+        m = Categorical(probs=action_prob)
+        if mode == "train":
+            action = m.sample()
+        else:
+            action = torch.argmax(m.probs, dim=-1)
+        return action.cpu().numpy()
 
         return action
 
