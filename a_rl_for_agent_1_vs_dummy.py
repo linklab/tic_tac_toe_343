@@ -1,4 +1,7 @@
 # 선수 에이전트: RL 에이전트, 후수 에이전트: Dummy 에이전트
+import os
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+
 from agents.b_human_agent import Human_Agent
 from agents.a_dummy_agent import Dummy_Agent
 from agents.c_dqn_agent_solution import TTTAgentDqn
@@ -8,6 +11,7 @@ from agents.e_a2c_agent_solution import TTTAgentA2C
 from common.a_env_tic_tac_toe_343 import TicTacToe343
 from common.c_game_stats import draw_performance, print_game_statistics, \
     print_step_status, epsilon_scheduled, GameStatus
+from common.d_utils import model_save, AGENT_TYPE, PLAY_TYPE
 
 
 INITIAL_EPSILON = 1.0
@@ -28,17 +32,17 @@ def learning_for_agent_1_vs_dummy():
     env = TicTacToe343()
 
     # Create agent
-    # agent_1 = TTTAgentDqn(
-    #     name="AGENT_1", env=env, gamma=0.99, learning_rate=0.00001,
-    #     replay_buffer_size=10_000, batch_size=32, target_sync_step_interval=500,
-    #     min_buffer_size_for_training=100
-    # )
+    agent_1 = TTTAgentDqn(
+        name="AGENT_1", env=env, gamma=0.99, learning_rate=0.00001,
+        replay_buffer_size=10_000, batch_size=32, target_sync_step_interval=1000,
+        min_buffer_size_for_training=1000
+    )
     # agent_1 = TTTAgentReinforce(
     #     name="AGENT_1", env=env, gamma=0.99, learning_rate=0.00001
     # )
-    agent_1 = TTTAgentA2C(
-        name="AGENT_1", env=env, gamma=0.99, learning_rate=0.00001, batch_size=32
-    )
+    # agent_1 = TTTAgentA2C(
+    #     name="AGENT_1", env=env, gamma=0.99, learning_rate=0.00001, batch_size=32
+    # )
     agent_2 = Dummy_Agent(name="AGENT_2", env=env)
 
     total_steps = 0
@@ -173,4 +177,4 @@ def play_with_agent_1(agent_1):
 
 if __name__ == '__main__':
     trained_agent_1 = learning_for_agent_1_vs_dummy()
-    play_with_agent_1(trained_agent_1)
+    model_save(trained_agent_1, AGENT_TYPE.DQN, PLAY_TYPE.FIRST, MAX_EPISODES)
