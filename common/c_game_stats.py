@@ -2,6 +2,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from common.d_utils import PLAY_TYPE
+
 linestyles = ['-', '--', ':']
 legends = ["AGENT-1 WIN", "AGENT-2 WIN", "DRAW"]
 GAME_STATUS_PRINT_PERIOD_EPISODES = 1000
@@ -99,7 +101,7 @@ def epsilon_scheduled(current_episode, last_scheduled_episodes,
 
 
 def print_game_statistics(info, episode, epsilon, total_steps,
-                          game_status: GameStatus):
+                          game_status: GameStatus, play_type=None):
     if info['winner'] == 1:
         game_status.num_player_1_win += 1
     elif info['winner'] == -1:
@@ -128,11 +130,20 @@ def print_game_statistics(info, episode, epsilon, total_steps,
         np.average(game_status.draw_info_list[-100:]) * 100
     )
 
+    if play_type == PLAY_TYPE.FIRST:
+        win_rate = game_status.player_1_win_rate_over_100_games[-1]
+    elif play_type == PLAY_TYPE.BACK:
+        win_rate = game_status.player_2_win_rate_over_100_games[-1]
+    elif play_type == PLAY_TYPE.SELF:
+        win_rate = game_status.draw_rate_over_100_games[-1]
+    else:
+        raise ValueError()
+
     if episode % GAME_STATUS_PRINT_PERIOD_EPISODES == 0:
-        print("GAMES DONE: {:5} |".format(episode),
+        print("GAMES DONE: {:6,} |".format(episode),
               "eps: {:.2f} |".format(epsilon),
-              "steps: {:6} |".format(total_steps),
-              "1_win : 2_win : draw = {:5} : {:5} : {:4} |".format(
+              "steps: {:7,} |".format(total_steps),
+              "1_win : 2_win : draw = {:6,} : {:6,} : {:6,} |".format(
                   game_status.num_player_1_win,
                   game_status.num_player_2_win,
                   game_status.num_draw,
@@ -142,10 +153,12 @@ def print_game_statistics(info, episode, epsilon, total_steps,
                   game_status.player_2_win_rate_over_100_games[-1],
                   game_status.draw_rate_over_100_games[-1],
               ),
-              "1_error: {:5.3f} | 2_error: {:5.3f}".format(
+              "1_error: {:5,.3f} | 2_error: {:5,.3f}".format(
                   np.sum(game_status.agent_1_episode_td_error[-100:]),
                   np.sum(game_status.agent_2_episode_td_error[-100:])
               ))
+
+    return win_rate
 
 
 def print_step_status(

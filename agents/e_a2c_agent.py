@@ -5,7 +5,8 @@ from torch.distributions import Categorical
 import torch.nn.functional as F
 import numpy as np
 
-from common.b_models_and_buffer import ActorCritic, ReplayBuffer
+from common.b_models_and_buffer import ActorCritic, ReplayBuffer, Transition
+from common.d_utils import AGENT_TYPE
 
 
 class TTTAgentA2C:
@@ -16,6 +17,7 @@ class TTTAgentA2C:
         self.learning_rate = learning_rate
         self.batch_size = batch_size
         self.buffer = ReplayBuffer(capacity=batch_size)
+        self.agent_type = AGENT_TYPE.A2C.value
 
         self.actor_critic_model = ActorCritic(n_features=12, n_actions=12)
         self.optimizer = optim.Adam(self.actor_critic_model.parameters(), lr=learning_rate)
@@ -26,22 +28,33 @@ class TTTAgentA2C:
         self.time_steps = 0
         self.training_time_steps = 0
 
+        self.model = self.actor_critic_model
+
     def get_action(self, state, epsilon=0.0, mode="TRAIN"):
         available_actions = state.get_available_actions()
-        action_prob = self.actor_critic_model.pi(state.data.flatten())
+        unavailable_actions = list(set(self.env.ALL_ACTIONS) - set(available_actions))
 
-        m = Categorical(probs=action_prob)
-        if mode == "train":
-            action = m.sample()
-        else:
-            action = torch.argmax(m.probs, dim=-1)
-        return action.cpu().numpy()
+        action = None
 
-        return action
+        # TODO
+
+        return action.item()
 
     def learning(self, state, action, next_state, reward, done):
         loss = 0.0
 
+        self.buffer.append(
+            Transition(state.data.flatten(), action, next_state.data.flatten(), reward, done)
+        )
+
+        if len(self.buffer) < self.batch_size:
+            return loss
+
+        # sample all from buffer
+        batch = self.buffer.sample(batch_size=-1)
+
+        observations, actions, next_observations, rewards, dones = batch
+
         # TODO
 
-        return loss
+        return loss.item()

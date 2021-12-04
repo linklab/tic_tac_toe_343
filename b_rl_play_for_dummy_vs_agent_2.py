@@ -1,10 +1,10 @@
-# 선수 에이전트: RL 에이전트, 후수 에이전트: Dummy 에이전트
+# 선수 에이전트: Dummy 에이전트, 후수 에이전트: RL 에이전트
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
+from common.d_utils import model_load
 from agents.b_human_agent import Human_Agent
 from common.a_env_tic_tac_toe_343 import TicTacToe343
-from common.d_utils import model_load
 
 # from agents.c_dqn_agent import TTTAgentDqn
 from agents.c_dqn_agent_solution import TTTAgentDqn
@@ -16,27 +16,23 @@ from agents.d_reinforce_agent_solution import TTTAgentReinforce
 from agents.e_a2c_agent_solution import TTTAgentA2C
 
 
-def play_with_agent_1(env, agent_1):
+def play_with_agent_2(env, agent_2):
     env.print_board_idx()
     state = env.reset()
 
-    agent_2 = Human_Agent(name="AGENT_2", env=env)
+    agent_1 = Human_Agent(name="AGENT_1", env=env)
     current_agent = agent_1
 
     print()
 
-    print("[Q-Learning 에이전트 차례]")
+    print("[당신(사람) 차례]")
     env.render()
 
     done = False
     while not done:
-        if isinstance(current_agent, TTTAgentDqn):
-            action = current_agent.get_action(state, mode="PLAY")
-        else:
-            action = current_agent.get_action(state)
-
+        action = current_agent.get_action(state)
         next_state, _, done, info = env.step(action)
-        if current_agent == agent_1:
+        if current_agent == agent_2:
             print("     State:", state)
             # print("   Q-value:", current_agent.get_q_values_for_one_state(state))
             # print("    Policy:", current_agent.get_policy_for_one_state(state))
@@ -44,16 +40,16 @@ def play_with_agent_1(env, agent_1):
             print("Next State:", next_state, end="\n\n")
 
         print("[{0}]".format(
-            "당신(사람) 차례" if current_agent == agent_1 \
-            else "Q-Learning 에이전트 차례"
+            "Q-Learning 에이전트 차례" if current_agent == agent_1 \
+            else "당신(사람) 차례"
         ))
         env.render()
 
         if done:
             if info['winner'] == 1:
-                print("Q-Learning 에이전트가 이겼습니다.")
-            elif info['winner'] == -1:
                 print("당신(사람)이 이겼습니다. 놀랍습니다!")
+            elif info['winner'] == -1:
+                print("Q-Learning 에이전트가 이겼습니다.")
             else:
                 print("비겼습니다. 잘했습니다!")
         else:
@@ -67,12 +63,10 @@ def play_with_agent_1(env, agent_1):
 
 if __name__ == '__main__':
     env = TicTacToe343()
+    agent_2 = TTTAgentDqn(name="AGENT_2", env=env)
+    # agent_1 = TTTAgentReinforce(name="AGENT_2", env=env)
+    # agent_1 = TTTAgentA2C(name="AGENT_2", env=env)
 
-    agent_1 = TTTAgentDqn(name="AGENT_1", env=env)
-    # agent_1 = TTTAgentReinforce(name="AGENT_1", env=env)
-    # agent_1 = TTTAgentA2C(name="AGENT_1", env=env)
-
-    model_file_name = "DQN_FIRST_95.0_0.054.pth"
-    model_load(agent_1.q, file_name=model_file_name)
-
-    play_with_agent_1(env, agent_1)
+    model_file_name = "DQN_BACK_31.0_12010827043.691.pth"
+    model_load(agent_2.q, file_name=model_file_name)
+    play_with_agent_2(env, agent_2)
