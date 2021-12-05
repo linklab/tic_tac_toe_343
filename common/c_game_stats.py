@@ -154,8 +154,8 @@ def print_game_statistics(info, episode, epsilon, total_steps,
                   game_status.draw_rate_over_100_games[-1],
               ),
               "1_error: {:5,.3f} | 2_error: {:5,.3f}".format(
-                  np.sum(game_status.agent_1_episode_td_error[-100:]),
-                  np.sum(game_status.agent_2_episode_td_error[-100:])
+                  np.average(game_status.agent_1_episode_td_error[-100:]) if len(game_status.agent_1_episode_td_error) > 0 else 0.0,
+                  np.average(game_status.agent_2_episode_td_error[-100:]) if len(game_status.agent_2_episode_td_error) > 0 else 0.0
               ))
 
     return win_rate

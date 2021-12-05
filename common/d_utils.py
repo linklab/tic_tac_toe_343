@@ -26,9 +26,9 @@ def model_load(model, file_name):
     model.load_state_dict(model_params)
 
 
-class EarlyStopping:
+class EarlyStopModelSaver:
     """주어진 patience 이후로 validation loss가 개선되지 않으면 학습을 조기 중지"""
-    def __init__(self, patience=20, target_win_rate=95.0):
+    def __init__(self, patience=30, target_win_rate=95.0):
         """
         Args:
             patience (int): validation loss가 개선된 후 기다리는 기간 (Default: 7)
@@ -46,11 +46,13 @@ class EarlyStopping:
                 '''최초 모델을 저장한다.'''
                 self.save_checkpoint(agent_type, play_type, win_rate, loss, model)
                 self.min_loss = loss
+                self.target_win_rate = win_rate
             elif loss >= self.min_loss:
                 self.counter += 1
-                #print(f'EarlyStopping counter: {self.counter} out of {self.patience} - {loss}')
+                #print(f'counter: {self.counter} out of {self.patience} - {loss}')
                 if self.counter >= self.patience:
                     early_stop = True
+                    print("EARLY STOP!")
             else:
                 '''loss가 감소하면 모델을 저장한다.'''
                 self.save_checkpoint(agent_type, play_type, win_rate, loss, model)
@@ -60,6 +62,12 @@ class EarlyStopping:
         return early_stop
 
     def save_checkpoint(self, agent_type, play_type, win_rate, loss, model):
+        target_remove_files = glob(os.path.join(MODEL_DIR, "{0}_{1}_*.pth".format(
+            agent_type, play_type.value
+        )))
+        for file_name in target_remove_files:
+            os.remove(file_name)
+
         model_file_name = os.path.join(MODEL_DIR, "{0}_{1}_{2:.1f}.pth".format(
             agent_type, play_type.value, win_rate
         ))
@@ -68,12 +76,6 @@ class EarlyStopping:
             f'Win Rate is {win_rate:.2f} and Loss decreased ({self.min_loss:.6f} --> {loss:.6f}).  '
             f'Saving model tp {model_file_name}'
         )
-
-        target_remove_files = glob(os.path.join(MODEL_DIR, "{0}_{1}_*.pth".format(
-            agent_type, play_type.value
-        )))
-        for file_name in target_remove_files:
-            os.remove(file_name)
 
         torch.save(model.state_dict(), model_file_name)
         self.min_loss = loss

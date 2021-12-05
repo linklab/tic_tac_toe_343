@@ -9,7 +9,7 @@ from common.d_utils import AGENT_TYPE
 
 
 class TTTAgentReinforce:
-    def __init__(self, name, env, gamma, learning_rate):
+    def __init__(self, name, env, gamma=0.99, learning_rate=0.001):
         self.name = name
         self.env = env
         self.gamma = gamma
@@ -31,7 +31,7 @@ class TTTAgentReinforce:
     def get_action(self, state, epsilon=0.0, mode="TRAIN"):
         available_actions = state.get_available_actions()
         unavailable_actions = list(set(self.env.ALL_ACTIONS) - set(available_actions))
-
+        obs = state.data.flatten()
         action = None
 
         # TODO
@@ -57,5 +57,7 @@ class TTTAgentReinforce:
         observations, actions, _, rewards, _ = batch
 
         # TODO
+
+        self.training_time_steps += 1
 
         return loss.item()

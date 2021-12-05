@@ -43,7 +43,7 @@ class TTTAgentDqn:
     def get_action(self, state, epsilon=0.0, mode="TRAIN"):
         available_actions = state.get_available_actions()
         unavailable_actions = list(set(self.env.ALL_ACTIONS) - set(available_actions))
-
+        obs = state.data.flatten()
         action = None
 
         # TODO
@@ -69,4 +69,7 @@ class TTTAgentDqn:
 
         # TODO
 
+        self.training_time_steps += 1
+
         return loss.item()
+

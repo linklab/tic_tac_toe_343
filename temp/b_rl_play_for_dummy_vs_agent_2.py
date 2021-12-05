@@ -7,13 +7,13 @@ from agents.b_human_agent import Human_Agent
 from common.a_env_tic_tac_toe_343 import TicTacToe343
 
 # from agents.c_dqn_agent import TTTAgentDqn
-from agents.c_dqn_agent_solution import TTTAgentDqn
+from agents.c_dqn_agent import TTTAgentDqn
 
 # from agents.d_reinforce_agent import TTTAgentReinforce
-from agents.d_reinforce_agent_solution import TTTAgentReinforce
+from agents.d_reinforce_agent import TTTAgentReinforce
 
 # from agents.e_a2c_agent import TTTAgentA2C
-from agents.e_a2c_agent_solution import TTTAgentA2C
+from agents.e_a2c_agent import TTTAgentA2C
 
 
 def play_with_agent_2(env, agent_2):

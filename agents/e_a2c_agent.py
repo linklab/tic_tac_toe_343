@@ -10,7 +10,7 @@ from common.d_utils import AGENT_TYPE
 
 
 class TTTAgentA2C:
-    def __init__(self, name, env, gamma, learning_rate, batch_size):
+    def __init__(self, name, env, gamma=0.99, learning_rate=0.00001, batch_size=32):
         self.name = name
         self.env = env
         self.gamma = gamma
@@ -33,7 +33,7 @@ class TTTAgentA2C:
     def get_action(self, state, epsilon=0.0, mode="TRAIN"):
         available_actions = state.get_available_actions()
         unavailable_actions = list(set(self.env.ALL_ACTIONS) - set(available_actions))
-
+        obs = state.data.flatten()
         action = None
 
         # TODO
@@ -56,5 +56,7 @@ class TTTAgentA2C:
         observations, actions, next_observations, rewards, dones = batch
 
         # TODO
+
+        self.training_time_steps += 1
 
         return loss.item()

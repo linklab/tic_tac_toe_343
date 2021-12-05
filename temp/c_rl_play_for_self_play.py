@@ -6,13 +6,13 @@ from common.a_env_tic_tac_toe_343 import TicTacToe343
 from common.d_utils import MODEL_DIR, PLAY_TYPE, model_load
 
 # from agents.c_dqn_agent import TTTAgentDqn
-from agents.c_dqn_agent_solution import TTTAgentDqn
+from agents.c_dqn_agent import TTTAgentDqn
 
 # from agents.d_reinforce_agent import TTTAgentReinforce
-from agents.d_reinforce_agent_solution import TTTAgentReinforce
+from agents.d_reinforce_agent import TTTAgentReinforce
 
 # from agents.e_a2c_agent import TTTAgentA2C
-from agents.e_a2c_agent_solution import TTTAgentA2C
+from agents.e_a2c_agent import TTTAgentA2C
 
 
 def self_play(env, self_agent):
