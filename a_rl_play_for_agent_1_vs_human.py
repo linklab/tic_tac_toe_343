@@ -67,11 +67,12 @@ def play_with_agent_1(env, agent_1):
 if __name__ == '__main__':
     env = TicTacToe343()
 
-    agent_1 = TTTAgentDqn(name="AGENT_1", env=env)
-    # agent_1 = TTTAgentReinforce(name="AGENT_1", env=env)
+    # agent_1 = TTTAgentDqn(name="AGENT_1", env=env)
+    agent_1 = TTTAgentReinforce(name="AGENT_1", env=env)
     # agent_1 = TTTAgentA2C(name="AGENT_1", env=env)
 
-    model_file_name = "DQN_FIRST_95.0.pth"
+    model_file_name = "REINFORCE_FIRST_95.0.pth"
     model_load(agent_1.model, file_name=model_file_name)
 
     play_with_agent_1(env, agent_1)
+
